@@ -9,15 +9,20 @@ import net.minestom.server.entity.ItemEntity
 import net.minestom.server.instance.Instance
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
+import net.minestom.server.utils.time.TimeUnit
 import world.cepi.itemextension.item.itemSerializationModule
 import world.cepi.kstom.item.get
 import world.cepi.kstom.item.item
 import world.cepi.kstom.item.set
+import world.cepi.kstom.serializer.DurationSerializer
+import java.time.Duration
 
 @Serializable
 data class Drops(
     val drops: List<DropItem> = listOf(),
-    val powerOptions: PowerOptions = PowerOptions()
+    val powerOptions: PowerOptions = PowerOptions(),
+    @Serializable(with = DurationSerializer::class)
+    val timeout: Duration = Duration.of(3, TimeUnit.SECOND)
 ) {
     fun renderItem(): ItemStack = item(Material.LIME_DYE) {
         displayName(

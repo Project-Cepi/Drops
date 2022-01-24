@@ -3,6 +3,7 @@ package world.cepi.drops
 import net.minestom.server.command.builder.arguments.ArgumentType
 import world.cepi.itemextension.item.cepiItem
 import world.cepi.kepi.item.AddCreationalItem
+import world.cepi.kstom.Manager
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.kommand.Kommand
 
@@ -29,9 +30,15 @@ object DropCommand : Kommand({
     syntax(animate).onlyPlayers {
         val drop = player.itemInMainHand.dropItem ?: return@onlyPlayers
 
-        drop.dropItems(player.instance!!, player.position.add(0.0, 1.0, 0.0)).map {
+        val entities = drop.dropItems(player.instance!!, player.position.add(0.0, 1.0, 0.0)).map {
             it.isPickable = false
+
+            it
         }
+
+        Manager.scheduler.buildTask {
+            entities.map { it.remove() }
+        }.delay(drop.timeout).schedule()
     }
 
     val power by literal
@@ -66,5 +73,15 @@ object DropCommand : Kommand({
             (!powerAmount).minimum.toDouble(),
             (!powerAmount).maximum.toDouble()
         )).renderItem()
+    }
+
+    val timeout by literal
+
+    val timeoutDuration = ArgumentType.Time("timeoutDuration")
+
+    syntax(timeout, timeoutDuration).onlyPlayers {
+        val drop = player.itemInMainHand.dropItem ?: return@onlyPlayers
+
+        player.itemInMainHand = drop.copy(timeout = !timeoutDuration).renderItem()
     }
 }, "drop")
