@@ -5,7 +5,7 @@ import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.minestom.server.coordinate.Point
-import net.minestom.server.entity.Player
+import net.minestom.server.entity.ItemEntity
 import net.minestom.server.instance.Instance
 import net.minestom.server.item.ItemStack
 import net.minestom.server.item.Material
@@ -15,7 +15,10 @@ import world.cepi.kstom.item.item
 import world.cepi.kstom.item.set
 
 @Serializable
-class Drops(val drops: List<DropItem> = listOf()) {
+data class Drops(
+    val drops: List<DropItem> = listOf(),
+    val powerOptions: PowerOptions = PowerOptions()
+) {
     fun renderItem(): ItemStack = item(Material.LIME_DYE) {
         displayName(
             Component.text("Drop Set", NamedTextColor.GREEN)
@@ -30,15 +33,18 @@ class Drops(val drops: List<DropItem> = listOf()) {
 
     fun calculateChance(): List<DropItem> = drops.filter { it.chance() }
 
-    fun dropItems(instance: Instance, point: Point) {
+    fun dropItems(
+        instance: Instance,
+        point: Point
+    ): List<ItemEntity> {
         val items = calculateChance()
 
-        items.forEach {
-            it.drop(instance, point)
+        return items.map {
+            it.drop(instance, point, powerOptions)
         }
     }
 
-    fun addItem(item: DropItem) = Drops(drops + item)
+    fun addItem(item: DropItem) = copy(drops = drops + item)
 }
 
 val ItemStack.dropItem: Drops? get() = get("drop", module = itemSerializationModule)

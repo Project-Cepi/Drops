@@ -11,16 +11,16 @@ import java.util.concurrent.ThreadLocalRandom
 @Serializable
 class DropItem(val item: Item, val amount: Int, val chance: Double) {
 
-    fun drop(instance: Instance, position: Point): ItemEntity {
-        val entity = ItemEntity(item.renderItem(1))
+    fun drop(
+        instance: Instance,
+        position: Point,
+        powerOptions: PowerOptions = PowerOptions()
+    ): ItemEntity {
+        val entity = ItemEntity(item.renderItem(amount))
 
         entity.setInstance(instance, position)
 
-        entity.velocity = Vec(
-            ThreadLocalRandom.current().nextDouble(1.0),
-            ThreadLocalRandom.current().nextDouble(1.0),
-            ThreadLocalRandom.current().nextDouble(1.0)
-        )
+        entity.velocity = powerOptions.generateVelocity()
 
         return entity
     }
