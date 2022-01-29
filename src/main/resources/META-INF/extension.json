@@ -5,6 +5,7 @@
   "dependencies": [
     "KStom",
     "Kepi",
-    "ItemExtension"
+    "ItemExtension",
+    "Actions"
   ]
 }

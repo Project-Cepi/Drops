@@ -49,6 +49,9 @@ dependencies {
     // Add Kepi
     compileOnly("com.github.Project-Cepi:Kepi:418fcdddc9")
 
+    // Add actions
+    compileOnly("com.github.Project-Cepi:Actions:3a864f3899")
+
     // import kotlinx serialization
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 }
